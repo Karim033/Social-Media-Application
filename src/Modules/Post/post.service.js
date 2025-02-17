@@ -130,38 +130,11 @@ export const getSinglePost = async (req, res, next) => {
 };
 
 export const activePosts = async (req, res, next) => {
-  let posts;
+  let { page } = req.query;
 
-  // if (req.user.role === roleType.Admin) {
-  //   posts = await dbservice.find({
-  //     model: PostModel,
-  //     filter: { isDeleted: false },
-  //     populate: [{ path: "createdBy", select: "userName image -_id" }],
-  //   });
-  // } else if (req.user.role === roleType.User) {
-  //   posts = await dbservice.find({
-  //     model: PostModel,
-  //     filter: { isDeleted: false, createdBy: req.user._id },
-  //     populate: [{ path: "createdBy", select: "userName image -_id" }],
-  //   });
-  // }
-  const cursor = PostModel.find({ isDeleted: false }).cursor();
-  let results = [];
-  for (
-    let post = await cursor.next();
-    post != null;
-    post = await cursor.next()
-  ) {
-    const comment = await dbservice.find({
-      model: CommentModel,
-      filter: {
-        postId: post._id,
-        isDeleted: false,
-        parentComment: { $exists: false },
-      },
-    });
-    results.push({ post, comment });
-  }
+  const results = await PostModel.find({
+    isDeleted: false,
+  }).paginate(page);
 
   return res.status(200).json({ success: true, results: { results } });
 };

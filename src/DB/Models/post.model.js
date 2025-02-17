@@ -30,7 +30,6 @@ const postSchema = new Schema(
     deletedBy: { type: Types.ObjectId, ref: "User" },
     customId: {
       type: String,
-      unique: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
@@ -42,5 +41,30 @@ postSchema.virtual("comments", {
   localField: "_id", // PK
   // justOne: true,
 });
+
+// pagination model
+// query   // skip , limit , populate , select
+// query.paginate = function () {}
+
+postSchema.query.paginate = async function (page) {
+  page = page ? page : 1;
+
+  const limit = 4;
+  const skip = limit * (page - 1);
+
+  // , itemPerPage
+  // this
+
+  const data = await this.skip(skip).limit(limit);
+  const items = await this.model.countDocuments();
+
+  return {
+    data,
+    totalItems: items,
+    currentPage: Number(page),
+    totalPages: Math.ceil(items / limit),
+    itemPerPage: data.length,
+  };
+};
 
 export const PostModel = mongoose.model.Post || model("Post", postSchema);
