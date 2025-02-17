@@ -13,23 +13,8 @@ import {
 const bootstarp = async (app, express) => {
   await connectDB();
 
-  app.use(morgan("dev")); // dev mode onlys
+  app.use(morgan("dev"));
   app.use(express.json());
-
-  // const whiteList = ["http://localhost:4200", "http://localhost:8080"];
-
-  // app.use((req, res, next) => {
-  //   // req.headers
-  //   if (!whiteList.includes(req.header("origin"))) {
-  //     return next(new Error("Blocked By CORS"));
-  //   }
-  //   res.header("Access-Control-Allow-Origin", req.header("origin"));
-  //   res.header("Access-Control-Allow-Headers", "*");
-  //   res.header("Access-Control-Allow-Methods", "*");
-  //   res.header("Access-Control-Private-Network", true);
-
-  //   return next();
-  // });
 
   app.get("/", (req, res) => res.json("Hello World!"));
 
